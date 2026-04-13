@@ -1,7 +1,6 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
-const DETECT_API_URL =
-  process.env.REACT_APP_DETECT_URL || "http://<EC2-IP>:5000/detect";
+const DETECT_API_URL = "/api/detect";
 
 const initialForm = {
   duration: "",
@@ -15,8 +14,28 @@ function Dashboard() {
   const [result, setResult] = useState(null);
   const [history, setHistory] = useState([]);
   const [error, setError] = useState("");
+  const [backendStatus, setBackendStatus] = useState("");
 
   const historyRows = useMemo(() => history.slice().reverse(), [history]);
+
+  useEffect(() => {
+    const checkBackend = async () => {
+      try {
+        const response = await fetch("/api/hello");
+
+        if (!response.ok) {
+          throw new Error("Backend hello endpoint is not reachable.");
+        }
+
+        const data = await response.json();
+        setBackendStatus(data.message || "Backend connected");
+      } catch (requestError) {
+        setBackendStatus(requestError.message);
+      }
+    };
+
+    checkBackend();
+  }, []);
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -83,6 +102,7 @@ function Dashboard() {
       <p className="subtle">
         API endpoint: <span>{DETECT_API_URL}</span>
       </p>
+      {backendStatus && <p className="subtle">Backend: {backendStatus}</p>}
 
       <div className="form-grid">
         <label>

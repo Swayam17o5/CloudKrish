@@ -54,6 +54,12 @@ def health_check():
     return "Backend is running"
 
 
+@app.route("/api/hello", methods=["GET"])
+def hello():
+    return jsonify({"message": "Hello from backend"})
+
+
+@app.route("/api/detect", methods=["POST"])
 @app.route("/detect", methods=["POST"])
 def detect_attack():
     data = request.get_json(silent=True) or {}
