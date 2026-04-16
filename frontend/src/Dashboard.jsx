@@ -55,6 +55,7 @@ function Dashboard() {
   );
   const [isBackendOnline, setIsBackendOnline] = useState(false);
   const [activePage, setActivePage] = useState("dashboard");
+  const [threatAlert, setThreatAlert] = useState(null);
 
   const historyRows = useMemo(() => history.slice().reverse(), [history]);
   const latestThreatScore = result
@@ -91,6 +92,24 @@ function Dashboard() {
 
     checkBackend();
   }, []);
+
+  useEffect(() => {
+    if (!threatAlert) {
+      return undefined;
+    }
+
+    const handleKeyDown = (event) => {
+      if (event.key === "Escape") {
+        setThreatAlert(null);
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [threatAlert]);
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -147,7 +166,10 @@ function Dashboard() {
       ]);
 
       if (data.prediction === 1) {
-        window.alert("Alert: Potential zero-day attack detected.");
+        setThreatAlert({
+          threatScore: data.threat_score,
+          detectedAt: new Date().toLocaleString(),
+        });
       }
 
       setForm(initialForm);
@@ -259,6 +281,10 @@ function Dashboard() {
     window.setTimeout(() => {
       URL.revokeObjectURL(blobUrl);
     }, 120000);
+  };
+
+  const closeThreatAlert = () => {
+    setThreatAlert(null);
   };
 
   return (
@@ -603,6 +629,45 @@ function Dashboard() {
           </section>
         )}
       </main>
+
+      {threatAlert && (
+        <div className="threat-popup-overlay" role="presentation" onClick={closeThreatAlert}>
+          <section
+            className="threat-popup"
+            role="alertdialog"
+            aria-modal="true"
+            aria-labelledby="threat-alert-title"
+            aria-describedby="threat-alert-copy"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <span className="threat-popup-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false">
+                <path
+                  d="M12 2 1 21h22L12 2Zm0 6c.5 0 .9.4.9.9v5.2a.9.9 0 0 1-1.8 0V8.9c0-.5.4-.9.9-.9Zm0 10a1.1 1.1 0 1 1 0-2.2 1.1 1.1 0 0 1 0 2.2Z"
+                  fill="currentColor"
+                />
+              </svg>
+            </span>
+
+            <div className="threat-popup-body">
+              <p className="threat-popup-kicker">Priority Security Alert</p>
+              <h2 className="threat-popup-title" id="threat-alert-title">
+                Potential zero-day activity detected
+              </h2>
+              <p className="threat-popup-copy" id="threat-alert-copy">
+                Threat score {formatThreatScore(threatAlert.threatScore)} at {threatAlert.detectedAt}.
+                Review this detection in the dashboard history and continue monitoring traffic.
+              </p>
+
+              <div className="threat-popup-actions">
+                <button className="threat-popup-btn" type="button" onClick={closeThreatAlert}>
+                  Acknowledge Alert
+                </button>
+              </div>
+            </div>
+          </section>
+        </div>
+      )}
 
       <footer className="site-footer">
         <span>ZeroSentinel</span>

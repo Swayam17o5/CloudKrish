@@ -525,6 +525,106 @@ body {
   color: var(--ink-2);
 }
 
+.threat-popup-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  background: rgba(8, 5, 6, 0.78);
+  backdrop-filter: blur(4px);
+}
+
+.threat-popup {
+  width: min(520px, 94vw);
+  background:
+    radial-gradient(circle at 90% 8%, rgba(192, 37, 62, 0.22), transparent 42%),
+    var(--bg-card);
+  border: 1px solid var(--danger-line);
+  border-radius: var(--radius-lg);
+  box-shadow:
+    0 22px 60px rgba(0, 0, 0, 0.5),
+    0 0 0 1px rgba(255, 255, 255, 0.03) inset;
+  padding: 1.25rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  animation: threat-popup-in 0.2s ease-out;
+}
+
+.threat-popup-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  background: var(--danger);
+  box-shadow: 0 0 0 4px rgba(244, 63, 94, 0.18);
+}
+
+.threat-popup-icon svg {
+  width: 19px;
+  height: 19px;
+}
+
+.threat-popup-body {
+  min-width: 0;
+}
+
+.threat-popup-kicker {
+  margin: 1px 0 0;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--brand-light);
+  font-weight: 600;
+}
+
+.threat-popup-title {
+  margin: 6px 0 0;
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  line-height: 1.2;
+}
+
+.threat-popup-copy {
+  margin: 8px 0 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--ink-2);
+}
+
+.threat-popup-actions {
+  margin-top: 12px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.threat-popup-btn {
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: var(--brand);
+  color: #ffffff;
+  height: 34px;
+  padding: 0 14px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.threat-popup-btn:hover {
+  background: var(--brand-light);
+}
+
+.threat-popup-btn:focus-visible {
+  outline: 2px solid var(--brand-light);
+  outline-offset: 2px;
+}
+
 .form-row {
   margin-top: 1rem;
   display: grid;
@@ -853,6 +953,18 @@ tbody tr:hover td {
   }
 }
 
+@keyframes threat-popup-in {
+  from {
+    transform: translateY(8px) scale(0.98);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
 @media (max-width: 860px) {
   .hero-block {
     flex-direction: column;
@@ -962,5 +1074,22 @@ tbody tr:hover td {
 
   .site-footer {
     padding: 0.9rem 1rem;
+  }
+
+  .threat-popup {
+    padding: 1rem;
+    gap: 10px;
+  }
+
+  .threat-popup-title {
+    font-size: 1.05rem;
+  }
+
+  .threat-popup-copy {
+    font-size: 12px;
+  }
+
+  .threat-popup-btn {
+    width: 100%;
   }
 }
